@@ -4,12 +4,20 @@ matrix:
   include:
     - go:
       - 1.9.x
+
+    - go:
       - 1.10.x
 
     - go:
       - 1.11.x
       install:
         - go get github.com/gopherjs/gopherjs
+        - npm install --global node-gyp
+      before_script:
+        - cd $GOPATH/src/github.com/gopherjs/gopherjs/node-syscall/
+        - node-gyp rebuild
+        - mkdir -p ~/.node_libraries/
+        - cp build/Release/syscall.node ~/.node_libraries/syscall.node
       script:
         - gopherjs build -v github.com/cimulator/cimulator/...
         - gopherjs test -v github.com/cimulator/cimulator/...
