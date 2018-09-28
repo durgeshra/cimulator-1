@@ -7,6 +7,7 @@ go:
 install:
   - # Do nothing. This is needed to prevent default install action "go get -t
   - # v ./..." from happening here (we want it to happen inside script step).
+  - go get github.com/gopherjs/gopherjs
 
 script:
   - go get -u -v golang.org/x/tools/cmd/goimports
@@ -15,3 +16,5 @@ script:
   - git diff --exit-code
   - go tool vet .
   - go test -v -race ./...
+  - gopherjs build -v github.com/cimulator/cimulator/...
+  - gopherjs test -v github.com/cimulator/cimulator/...
