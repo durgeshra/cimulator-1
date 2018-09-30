@@ -28,6 +28,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("File read successfully.\nContents:\n%s", string(data))
+	fmt.Printf("File read successfully.\nContents:\n%s", data)
 
 }
