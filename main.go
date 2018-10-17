@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"os/exec"
 )
 
 // four justs returns 4.
@@ -23,6 +24,7 @@ func main() {
 	} else {
 		log.Fatalf("Number of commands should be 2, is %d", len(os.Args))
 	}
+	_ = exec.Command("firefox")
 
 	if err != nil {
 		log.Fatal(err)

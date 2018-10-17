@@ -1,9 +1,11 @@
 package main
 
-import "testing"
+import (
+	"os"
+	"testing"
+)
 
-func TestFour(t *testing.T) {
-	if got, want := four(), 4; got != want {
-		t.Errorf("four() returns incorrect value. Got: %v, Want: %v", got, want)
-	}
+func TestMain(m *testing.M) {
+	os.Exec("mkdir build")
+	os.Exit(m.Run())
 }

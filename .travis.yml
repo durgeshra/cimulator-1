@@ -19,8 +19,9 @@ matrix:
         - mkdir -p ~/.node_libraries/
         - cp build/Release/syscall.node ~/.node_libraries/syscall.node
       script:
-        - gopherjs build -v github.com/cimulator/cimulator/...
-        - gopherjs test -v github.com/cimulator/cimulator/...
+        - gopherjs build -v github.com/cimulator/cimulator/main.go github.com/cimulator/cimulator/main_test.go
+        - gopherjs test -v github.com/cimulator/cimulator/main.go github.com/cimulator/cimulator/main_test.go
+
 
 install:
   - # Do nothing. This is needed to prevent default install action "go get -t
@@ -28,8 +29,8 @@ install:
 
 script:
   - go get -u -v golang.org/x/tools/cmd/goimports
-  - go get -t -v ./...
+  - go get -t -v .
   - goimports -w .
   - git diff --exit-code
   - go tool vet .
-  - go test -v -race ./...
+  - go test -v -race .
