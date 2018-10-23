@@ -4,32 +4,30 @@ matrix:
   include:
     - go:
       - 1.9.x
-
     - go:
       - 1.10.x
-
     - go:
       - 1.11.x
-      install:
+      before_install:
         - go get github.com/gopherjs/gopherjs
         - npm install --global node-gyp
-      before_script:
+      after_script:
         - cd $GOPATH/src/github.com/gopherjs/gopherjs/node-syscall/
         - node-gyp rebuild
         - mkdir -p ~/.node_libraries/
         - cp build/Release/syscall.node ~/.node_libraries/syscall.node
-      script:
-        - gopherjs build -v github.com/cimulator/cimulator/...
-        - gopherjs test -v github.com/cimulator/cimulator/...
+        - gopherjs build -v $GOPATH/src/github.com/cimulator/cimulator/build/*.go
 
 install:
-  - # Do nothing. This is needed to prevent default install action "go get -t
-  - # v ./..." from happening here (we want it to happen inside script step).
-
+  - go get -u golang.org/x/tools/cmd/goyacc
+  - go get -u golang.org/x/tools/cmd/goimports
+  - cd $GOPATH/src/github.com/cimulator/cimulator
+  - mkdir build
+  - go generate
 script:
-  - go get -u -v golang.org/x/tools/cmd/goimports
-  - go get -t -v ./...
+  - cd $GOPATH/src/github.com/cimulator/cimulator/build
   - goimports -w .
   - git diff --exit-code
   - go tool vet .
-  - go test -v -race ./...
+  - go build *.go
+  - go test
