@@ -28,8 +28,10 @@ var Regex = map[int]*regexp.Regexp{}
 // init specifies regex for variables and numerals.
 func init() {
 	Regex[NUM] = regexp.MustCompile(`^[0-9][0-9\.eE]*`)
-	Regex[VAR] = regexp.MustCompile(`^[a-zA-Z]`)
+	Regex[VARNAME] = regexp.MustCompile(`^[a-zA-Z][a-zA-Z0-9_]*`)
 }
+
+var datatypes = []string{"int"}
 
 // next returns the next rune for the lexer.
 func (x *cimLex) next() rune {
@@ -60,10 +62,16 @@ func (x *cimLex) fromRegex(ret int, yylval *cimSymType) string {
 }
 
 // variable lexes a variable.
-func (x *cimLex) variable(yylval *cimSymType) int {
-	v := x.fromRegex(VAR, yylval)
-	yylval.Id = rune(v[0])
-	return VAR
+func (x *cimLex) letter(yylval *cimSymType) int {
+	v := x.fromRegex(VARNAME, yylval)
+	for _, b := range datatypes {
+		if b == v {
+			yylval.Datatype = v
+			return DATATYPE
+		}
+	}
+	yylval.Id = v
+	return VARNAME
 }
 
 // num lexes a number.
@@ -88,12 +96,11 @@ func (x *cimLex) Lex(yylval *cimSymType) int {
 			return eof
 		case InSlice(c, []rune("0123456789")):
 			return x.num(yylval)
-		case InSlice(c, []rune("+=")):
+		case InSlice(c, []rune("+-*=;")):
 			x.source = x.source[size(c):]
 			return int(c)
-
 		case unicode.IsLetter(c):
-			return x.variable(yylval)
+			return x.letter(yylval)
 		case InSlice(c, []rune(" \t\n\r")):
 			x.source = x.source[size(c):]
 		default:
